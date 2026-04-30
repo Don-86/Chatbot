@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chatbot Dịch vụ công - Công an xã</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial; margin:0; background:#eef2f7;}
+.container {max-width:420px; margin:auto; background:#fff; height:100vh; display:flex; flex-direction:column;}
+.header {background:#0b5ed7; color:#fff; padding:15px; font-size:18px;}
+.tabs {display:flex; flex-wrap:wrap;}
+.tab {flex:1; padding:10px; text-align:center; background:#f1f3f5; cursor:pointer;}
+.tab:hover {background:#d0e2ff;}
+.chatbox {flex:1; padding:15px; overflow-y:auto;}
+.card {background:#f8f9fa; padding:10px; border-radius:6px; margin-bottom:10px;}
+.button {background:#0b5ed7; color:#fff; padding:10px; margin:5px 0; border-radius:6px; text-align:center; cursor:pointer;}
+.button:hover {background:#084298;}
+.breadcrumb {font-size:13px; color:#666; margin-bottom:10px;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">🤖 Chatbot Dịch vụ công Công an xã</div>
+
+    <div class="tabs">
+        <div class="tab" onclick="menu('cutru')">Cư trú</div>
+        <div class="tab" onclick="menu('cccd')">CCCD</div>
+        <div class="tab" onclick="menu('xe')">Xe</div>
+        <div class="tab" onclick="menu('xacthuc')">Xác nhận</div>
+        <div class="tab" onclick="menu('phananh')">Phản ánh</div>
+    </div>
+
+    <div class="chatbox" id="chatbox">
+        👉 Chọn nhóm thủ tục để bắt đầu
+    </div>
+</div>
+
+<script>
+const DATA = {
+
+cutru: [
+{
+name:"Đăng ký thường trú",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc/tthc?matt=26360",
+html:`
+<div class="card">
+📍 Đăng ký thường trú<br><br>
+📄 Hồ sơ: CCCD, giấy tờ nhà<br>
+📝 Các bước: Điền form → Upload → Nộp<br>
+⏱️ 7 ngày
+</div>
+<div class="button" onclick="go(this)" data-link="">🌐 Thực hiện online</div>
+`
+},
+{
+name:"Đăng ký tạm trú",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc/tthc?matt=26356",
+html:`
+<div class="card">
+📍 Đăng ký tạm trú<br><br>
+📄 Hồ sơ: CCCD<br>
+📝 Các bước: Khai báo → Nộp<br>
+⏱️ 3 ngày
+</div>
+<div class="button" onclick="go(this)" data-link="">🌐 Thực hiện online</div>
+`
+}
+],
+
+cccd: [
+{
+name:"Cấp CCCD",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc?linh_vuc=CAP_CCCD",
+html:`
+<div class="card">
+📍 Cấp CCCD<br><br>
+📝 Quy trình: Đặt lịch → Lăn tay → Nhận thẻ<br>
+⏱️ 7-15 ngày
+</div>
+<div class="button" onclick="go(this)" data-link="">📅 Đặt lịch</div>
+`
+}
+],
+
+xe: [
+{
+name:"Đăng ký xe",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc?linh_vuc=PT_GIAO_THONG",
+html:`
+<div class="card">
+📍 Đăng ký xe<br><br>
+📄 Hồ sơ: CCCD, hóa đơn<br>
+📝 Các bước: Khai online → Kiểm tra xe → Bấm biển<br>
+⏱️ Trong ngày
+</div>
+<div class="button" onclick="go(this)" data-link="">🚗 Khai online</div>
+`
+}
+],
+
+xacthuc: [
+{
+name:"Xác nhận nhân thân",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc/tthc?matt=26497",
+html:`
+<div class="card">
+📍 Xác nhận nhân thân<br><br>
+📝 Nộp yêu cầu → Xác minh → Trả kết quả<br>
+⏱️ 1-2 ngày
+</div>
+<div class="button" onclick="go(this)" data-link="">📄 Xem chi tiết</div>
+`
+}
+],
+
+phananh: [
+{
+name:"Gửi phản ánh",
+link:"https://dichvucong.bocongan.gov.vn/bocongan/bothutuc?linh_vuc=QL_CU_TRU",
+html:`
+<div class="card">
+📍 Phản ánh kiến nghị<br><br>
+📄 Nhập nội dung → Gửi → Nhận phản hồi
+</div>
+<div class="button" onclick="go(this)" data-link="">📩 Gửi phản ánh</div>
+`
+}
+]
+
+};
+
+function menu(type){
+let box = document.getElementById("chatbox");
+box.innerHTML = `<div class="breadcrumb">Trang chủ > ${type.toUpperCase()}</div>`;
+
+DATA[type].forEach((item,i)=>{
+    box.innerHTML += `<div class="button" onclick="detail('${type}',${i})">${item.name}</div>`;
+});
+}
+
+function detail(type,i){
+let item = DATA[type][i];
+let box = document.getElementById("chatbox");
+
+box.innerHTML = `
+<div class="breadcrumb">Trang chủ > ${type.toUpperCase()} > ${item.name}</div>
+${item.html.replace('data-link=""', `data-link="${item.link}"`)}
+<div class="button" onclick="menu('${type}')">⬅ Quay lại</div>
+`;
+}
+
+function go(el){
+let link = el.getAttribute("data-link");
+window.open(link, "_blank");
+}
+</script>
+
+</body>
+</html>
